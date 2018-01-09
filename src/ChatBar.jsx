@@ -6,6 +6,7 @@ class ChatBar extends Component{
       <footer className="chatbar">
         <input className="chatbar-username" placeholder="Your Name (Optional)" defaultValue={this.props.currentUser.name} name="username"/>
         <input className="chatbar-message" placeholder="Type a message and hit ENTER" onKeyPress={
+          // Add event handler for username.
           (event) => {
             if(event.key === 'Enter'){
               this.props.addMessage({
@@ -13,6 +14,7 @@ class ChatBar extends Component{
                 type: 'chat',
                 content: event.target.value
               });
+              event.target.value = '';
             }
           }
         }/>
