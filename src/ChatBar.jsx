@@ -15,7 +15,6 @@ class ChatBar extends Component{
           className="chatbar-username"
           placeholder="Your Name (Optional)"
           value={this.state.username}
-          name="username"
           onChange={
             (event) => {
               this.setState({username: event.target.value })

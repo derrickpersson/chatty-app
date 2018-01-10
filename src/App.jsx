@@ -6,7 +6,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-        currentUser: {name: "Derrick"},
+        currentUser: {name: "Anonymous"},
         messages: [
           // {
           //   id: '1',
@@ -25,17 +25,45 @@ class App extends Component {
           //   type: 'system',
           //   content: "Anonymous changed their name to nomnom"
           // }
-        ]
+        ],
+        currentUsers : 0
     }
   }
 
   componentDidMount() {
     this.ws = new WebSocket('ws://localhost:3001');
+    this.ws.onopen = (event) => {
+      const openConnection = {
+        type: "postConnection",
+        connected: true
+      }
+      this.ws.send(JSON.stringify(openConnection));
+    }
+
+    this.ws.onclose = (event) => {
+      const closeConnection = {
+        type: "postConnection",
+        connected: false
+      }
+      this.ws.send(JSON.stringify(closeConnection));
+    }
+
     console.log('Connected to server');
     console.log("componentDidMount <App />");
     this.ws.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
-      this.setState({ messages: this.state.messages.concat(newMessage)});
+      if(newMessage.type === "connectedUsers"){
+        console.log(newMessage);
+        this.setState({currentUsers : newMessage.size });
+      }else if(newMessage.type === "incomingConnection"){
+        const newNotification = {
+          content: `A user has ${(newMessage.connected && 'joined') || 'left'} chatty.`,
+          type: 'incomingNotification',
+        }
+        this.setState({messages: this.state.messages.concat(newNotification)})
+      }else{
+        this.setState({ messages: this.state.messages.concat(newMessage)});
+      }
     };
     // setTimeout(() => {
     //   console.log("Simulating incoming message");
@@ -90,6 +118,7 @@ class App extends Component {
       <div>
         <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
+          <p className="navbar-users"> {this.state.currentUsers} {this.state.currentUsers > 1 ? 'users' : 'user'}  online</p>
         </nav>
         <MessageList messages={this.state.messages} />
         <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage.bind(this)} />
