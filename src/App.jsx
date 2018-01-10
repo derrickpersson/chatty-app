@@ -50,13 +50,18 @@ class App extends Component {
 
   addMessage(input){
     const newMessage = {
-      username: input.name,
+    username: input.name || 'Anonymous',
       type: 'chat',
       content: input.content
     }
+    this.setState({currentUser: input.name});
     this.ws.send(JSON.stringify(newMessage));
     // this.setState({messages: this.state.messages.concat(newMessage)});
   }
+
+  // changeUser(input){
+  //   this.setState({ currentUser: input});
+  // }
 
   render() {
     return (
