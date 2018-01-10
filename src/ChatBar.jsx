@@ -26,12 +26,15 @@ class ChatBar extends Component{
           // Add event handler for username.
           (event) => {
             if(event.key === 'Enter'){
-              this.props.addMessage({
-                name: this.state.username,
-                type: 'chat',
-                content: event.target.value
-              });
-              event.target.value = '';
+              // if (event.target.value) {
+                this.props.addMessage({
+                  name: this.state.username,
+                  content: event.target.value
+                });
+                event.target.value = '';
+              // } else {
+              //   alert('Please enter a proper message');
+              // }
             }
           }
         }/>
@@ -50,3 +53,11 @@ export default ChatBar;
               }
             }
           }*/
+
+          //             if(event.key === 'Enter' && this.state.username !== this.props.currentUser.name){
+          //     this.props.addSystemMessage({
+          //       type: 'postNotification',
+          //       name: this.state.username
+          //     })
+          //   }
+          // }
