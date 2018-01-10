@@ -63,7 +63,7 @@ class App extends Component {
         content: `${this.state.currentUser.name || 'Anonymous'} changed their username to ${input.name || 'Anonymous'}`
       });
     }
-    if (input.content) {
+    if(input.content) {
       messageQueue = messageQueue.concat({
         username: input.name || 'Anonymous',
         type: 'postMessage',
