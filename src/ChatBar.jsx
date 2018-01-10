@@ -17,7 +17,9 @@ class ChatBar extends Component{
           value={this.state.username}
           onChange={
             (event) => {
-              this.setState({username: event.target.value })
+              this.setState({
+                username: event.target.value
+              })
             }
           }
         />
@@ -25,15 +27,12 @@ class ChatBar extends Component{
           // Add event handler for username.
           (event) => {
             if(event.key === 'Enter'){
-              // if (event.target.value) {
                 this.props.addMessage({
                   name: this.state.username,
-                  content: event.target.value
+                  content: event.target.value,
+                  color: this.props.currentUser.color
                 });
                 event.target.value = '';
-              // } else {
-              //   alert('Please enter a proper message');
-              // }
             }
           }
         }/>
@@ -42,21 +41,3 @@ class ChatBar extends Component{
 }
 
 export default ChatBar;
-
-/*          onKeyPress={
-            (event) => {
-              if(event.key === 'Enter'){
-                this.props.changeUser({
-                  name: this.state.username
-                })
-              }
-            }
-          }*/
-
-          //             if(event.key === 'Enter' && this.state.username !== this.props.currentUser.name){
-          //     this.props.addSystemMessage({
-          //       type: 'postNotification',
-          //       name: this.state.username
-          //     })
-          //   }
-          // }

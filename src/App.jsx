@@ -7,25 +7,7 @@ class App extends Component {
     super(props);
     this.state = {
         currentUser: {name: "Anonymous"},
-        messages: [
-          // {
-          //   id: '1',
-          //   type: 'chat',
-          //   username: "Anonymous1",
-          //   content: "I won't be impressed with technology until I can download food."
-          // },
-          // {
-          //   id: '2',
-          //   type: 'chat',
-          //   username: "Anonymous2",
-          //   content: "I won't be impressed with technology until I can download food."
-          // },
-          // {
-          //   id: '3',
-          //   type: 'system',
-          //   content: "Anonymous changed their name to nomnom"
-          // }
-        ],
+        messages: [],
         currentUsers : 0
     }
   }
@@ -61,19 +43,16 @@ class App extends Component {
           type: 'incomingNotification',
         }
         this.setState({messages: this.state.messages.concat(newNotification)})
+      }else if(newMessage.type === "color"){
+        const newUserState = {
+          name: this.state.currentUser.name,
+          color: newMessage.color
+        }
+        this.setState({currentUser: newUserState})
       }else{
         this.setState({ messages: this.state.messages.concat(newMessage)});
       }
     };
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   // Add a new message to the list of messages in the data store
-    //   const newMessage = {id: "4", username: "Michelle",type: 'chat', content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage)
-    //   // Update the state of the app component.
-    //   // Calling setState will trigger a call to render() in App and all child components.
-    //   this.setState({messages: messages})
-    // }, 3000);
   }
 
   addMessage(input){
@@ -88,30 +67,18 @@ class App extends Component {
       messageQueue = messageQueue.concat({
         username: input.name || 'Anonymous',
         type: 'postMessage',
-        content: input.content
+        content: input.content,
+        color: input.color
       });
     }
-    this.setState({currentUser: { name: input.name }});
+    this.setState({currentUser: {
+      name: input.name,
+      color: input.color
+      }});
     messageQueue.forEach((message) => {
       this.ws.send(JSON.stringify(message));
     });
-    // this.setState({messages: this.state.messages.concat(newMessage)});
   }
-
-  // addSystemMessage(input){
-  //   const content = `${this.state.currentUser} changed their username to ${input.name || 'Anonymous'}`;
-  //   const newMessage = {
-  //     type: 'postNotification',
-  //     content: content
-  //   }
-  //   this.setState({currentUser: input.name});
-  //   this.ws.send(JSON.stringify(newMessage));
-  //   // this.setState({messages: this.state.messages.concat(newMessage)});
-  // }
-
-  // changeUser(input){
-  //   this.setState({ currentUser: input});
-  // }
 
   render() {
     return (
