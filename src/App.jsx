@@ -35,12 +35,12 @@ class App extends Component {
     this.ws.onmessage = (event) => {
       const newMessage = JSON.parse(event.data);
       if(newMessage.type === "connectedUsers"){
-        console.log(newMessage);
         this.setState({currentUsers : newMessage.size });
       }else if(newMessage.type === "incomingConnection"){
         const newNotification = {
           content: `A user has ${(newMessage.connected && 'joined') || 'left'} chatty.`,
           type: 'incomingNotification',
+          id: newMessage.id
         }
         this.setState({messages: this.state.messages.concat(newNotification)})
       }else if(newMessage.type === "color"){

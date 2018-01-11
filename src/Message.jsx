@@ -3,16 +3,20 @@ import React, {Component} from 'react';
 class Message extends Component{
   render(){
     const detectImage = function(url){
-      let re = /.*?.png$ || .*?.jpg$ || .*?.gif$/;
+      let re = /.png$|.jpg$|.gif$/;
       return re.test(url);
     }
 
     if(this.props.type === 'incomingMessage'){
-      if(detectImage(this.props.content)){
+      let contentArray = this.props.content.split(' ');
+      let lastItem = contentArray[contentArray.length - 1];
+      let otherItems = contentArray.slice(0, (contentArray.length - 1)).join(' ');
+
+      if(detectImage(lastItem)){
         return (
-          <div>
-            <span className={"message-username " + this.props.color}>{this.props.username}</span>
-            <img className="images" src={this.props.content} />
+          <div className="message">
+            <span key={this.props.id} className={"message-username " + this.props.color}>{this.props.username}</span>
+            <div className="message-content">{otherItems && (<div>{otherItems}</div>)}<img className="images" src={lastItem} /></div>
           </div>)
       }
       return (
@@ -22,7 +26,7 @@ class Message extends Component{
         </div>)
     }else{
       return (
-        <div className="message system">
+        <div key={this.props.id} className="message system">
           {this.props.content}
         </div>)
     }
