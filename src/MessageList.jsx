@@ -7,13 +7,14 @@ class MessageList extends Component{
     return (
       <main className="messages">
         {this.props.messages.map((message) => {
+          const {id, username, content, type, color } = message;
           return (
             <Message
-            key={message.id}
-            username={message.username}
-            content={message.content}
-            type={message.type}
-            color={message.color}/>
+            key={id}
+            username={username}
+            content={content}
+            type={type}
+            color={color}/>
             )
         })}
 

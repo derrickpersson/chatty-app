@@ -14,78 +14,59 @@ class App extends Component {
 
   componentDidMount() {
     this.ws = new WebSocket('ws://localhost:3001');
-    this.ws.onopen = (event) => {
-      const openConnection = {
-        type: "postConnection",
-        connected: true
-      }
-      this.ws.send(JSON.stringify(openConnection));
-    }
 
-    this.ws.onclose = (event) => {
-      const closeConnection = {
-        type: "postConnection",
-        connected: false
-      }
-      this.ws.send(JSON.stringify(closeConnection));
-    }
-
-    console.log('Connected to server');
-    console.log("componentDidMount <App />");
     this.ws.onmessage = (event) => {
+      // JSON parse & stringify must be wrapped in Try and Catch
       const newMessage = JSON.parse(event.data);
-      if(newMessage.type === "connectedUsers"){
-        this.setState({currentUsers : newMessage.size });
-      }else if(newMessage.type === "incomingConnection"){
-        const newNotification = {
-          content: `A user has ${(newMessage.connected && 'joined') || 'left'} chatty.`,
-          type: 'incomingNotification',
-          id: newMessage.id
-        }
-        this.setState({messages: this.state.messages.concat(newNotification)})
-      }else if(newMessage.type === "color"){
-        const newUserState = {
-          name: this.state.currentUser.name,
-          color: newMessage.color
-        }
-        this.setState({currentUser: newUserState})
-      }else{
-        this.setState({ messages: this.state.messages.concat(newMessage)});
+      switch (newMessage.type){
+        case "connectedUsers":
+          this.setState({currentUsers : newMessage.size});
+          break;
+        case "incomingConnection":
+          const newNotification = {
+            content: `A user has ${(newMessage.connected && 'joined') || 'left'} chatty.`,
+            type: 'incomingNotification',
+            id: newMessage.id
+          }
+          this.setState({messages: this.state.messages.concat(newNotification)});
+          break;
+        case "incomingMessage":
+        case "incomingNotification":
+          this.setState({ messages: this.state.messages.concat(newMessage)});
+          break;
+        default:
+          console.log("Unexpected message type: ", newMessage);
       }
     };
   }
 
   addMessage(input){
-    let messageQueue = [];
     if(this.state.currentUser.name !== input.name){
-      messageQueue = messageQueue.concat({
+      const notificationMessage = {
         type: 'postNotification',
         content: `${this.state.currentUser.name || 'Anonymous'} changed their username to ${input.name || 'Anonymous'}`
-      });
+      };
+      this.ws.send(JSON.stringify(notificationMessage));
     }
     if(input.content) {
-      messageQueue = messageQueue.concat({
+      const message = {
         username: input.name || 'Anonymous',
         type: 'postMessage',
-        content: input.content,
-        color: input.color
-      });
+        content: input.content
+      };
+      this.ws.send(JSON.stringify(message));
     }
     this.setState({currentUser: {
-      name: input.name,
-      color: input.color
+      name: input.name
       }});
-    messageQueue.forEach((message) => {
-      this.ws.send(JSON.stringify(message));
-    });
-  }
+    };
 
   render() {
     return (
       <div>
         <nav className="navbar">
         <a href="/" className="navbar-brand">Chatty</a>
-          <p className="navbar-users"> {this.state.currentUsers} {this.state.currentUsers > 1 ? 'users' : 'user'}  online</p>
+          <p className="navbar-users"> {this.state.currentUsers} {this.state.currentUsers === 1 ? 'users' : 'user'}  online</p>
         </nav>
         <MessageList messages={this.state.messages} />
         <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage.bind(this)} />

@@ -3,7 +3,8 @@ import React, {Component} from 'react';
 class Message extends Component{
   render(){
     const detectImage = function(url){
-      let re = /.png$|.jpg$|.gif$/;
+      // Control group
+      let re = /\.(gif|jpg|jpeg|tiff|png)$/;
       return re.test(url);
     }
 
