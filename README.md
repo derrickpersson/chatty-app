@@ -24,7 +24,7 @@ You can now connect on localhost at port 3000 and begin communicating!
 
 ### Screenshots
 
-!["Chat with users in real-time!"]
+!["Chat with users in real-time!"](https://github.com/derrickpersson/chatty-app/blob/master/docs/homepage.png?raw=true)
 
 ### Dependencies
 
